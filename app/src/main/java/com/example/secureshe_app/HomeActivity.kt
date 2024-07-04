@@ -4,11 +4,11 @@ import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.database.Cursor
 import android.location.*
 import android.os.Bundle
 import android.widget.ImageButton
 import android.widget.ImageView
-import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -16,6 +16,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import android.telephony.SmsManager
+import android.widget.Toast
 import java.io.IOException
 import java.util.*
 
@@ -23,11 +24,14 @@ class HomeActivity : AppCompatActivity() {
 
     private lateinit var lm: LocationManager
     private var currentLocation: String = ""
+    private lateinit var databaseHelper: ContactsDatabaseHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.home)
+
+        databaseHelper = ContactsDatabaseHelper(this)
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -98,12 +102,20 @@ class HomeActivity : AppCompatActivity() {
             if (addresses.isNotEmpty()) {
                 val address = addresses[0]
                 currentLocation = "${address.getAddressLine(0)}, ${address.locality}"
-                sendSms("9173432482", "I know am Atmanirbhar but I need you rn! My current location is: $currentLocation")
+                shareLocation(currentLocation)
             }
         } catch (e: IOException) {
             e.printStackTrace()
         } catch (e: IllegalArgumentException) {
             e.printStackTrace()
+        }
+    }
+
+    private fun shareLocation(location: String) {
+        if (areSmsPermissionsGranted()) {
+            sendSmsToAllContacts(location)
+        } else {
+            requestSmsPermissions()
         }
     }
 
@@ -119,19 +131,26 @@ class HomeActivity : AppCompatActivity() {
         )
     }
 
-    private fun sendSms(phoneNumber: String, message: String) {
-        if (areSmsPermissionsGranted()) {
-            try {
-                val smsManager: SmsManager = SmsManager.getDefault()
-                smsManager.sendTextMessage(phoneNumber, null, message, null, null)
-                Toast.makeText(this, "Emergency message sent to $phoneNumber", Toast.LENGTH_LONG).show()
-            } catch (e: Exception) {
-                e.printStackTrace()
-                Toast.makeText(this, "Failed to send SMS: ${e.message}", Toast.LENGTH_LONG).show()
+    private fun sendSmsToAllContacts(location: String) {
+        val db = databaseHelper.readableDatabase
+        val cursor: Cursor = db.query(
+            ContactsDatabaseHelper.TABLE_NAME,
+            arrayOf(ContactsDatabaseHelper.COLUMN_NUMBER),
+            null, null, null, null, null
+        )
+
+        val smsManager: SmsManager = SmsManager.getDefault()
+        val message = "I need you rn! My current location is: $location"
+
+        cursor.use {
+            if (it.moveToFirst()) {
+                do {
+                    val number = it.getString(it.getColumnIndexOrThrow(ContactsDatabaseHelper.COLUMN_NUMBER))
+                    smsManager.sendTextMessage(number, null, message, null, null)
+                } while (it.moveToNext())
             }
-        } else {
-            requestSmsPermissions()
         }
+        Toast.makeText(this, "Emergency messages sent to all contacts", Toast.LENGTH_LONG).show()
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
@@ -144,7 +163,7 @@ class HomeActivity : AppCompatActivity() {
             }
             SMS_PERMISSION_REQUEST_CODE -> {
                 if (areSmsPermissionsGranted()) {
-                    sendSms("9173432482", "I know am Atmanirbhar but I need you rn! My current location is: $currentLocation")
+                    sendSmsToAllContacts(currentLocation)
                 }
             }
         }
