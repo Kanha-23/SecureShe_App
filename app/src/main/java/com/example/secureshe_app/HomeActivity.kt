@@ -77,6 +77,7 @@ class HomeActivity : AppCompatActivity() {
 
         val imageX = findViewById<ImageView>(R.id.image_x)
         imageX.setOnClickListener {
+            applyScaleAnimation(imageX)
             if (areLocationPermissionsGranted()) {
                 getLocationUpdates()
             } else {

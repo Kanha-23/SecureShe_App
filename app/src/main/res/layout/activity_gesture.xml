@@ -12,7 +12,7 @@
         android:id="@+id/heading"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Government Schemes For Women"
+        android:text="Hand Gesture For Help"
         android:textSize="24sp"
         android:textStyle="bold"
         android:gravity="center"
@@ -55,7 +55,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/handsign1" />
+                    android:src="@drawable/h1" />
             </androidx.cardview.widget.CardView>
 
             <!-- CardView 2 -->
@@ -74,7 +74,7 @@
                     android:layout_height="wrap_content"
                     android:scaleType="centerCrop"
 
-                    android:src="@drawable/help1" />
+                    android:src="@drawable/h2" />
             </androidx.cardview.widget.CardView>
 
             <!-- CardView 3 -->
@@ -92,7 +92,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="140dp"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/help2" />
+                    android:src="@drawable/h3" />
             </androidx.cardview.widget.CardView>
 
             <!-- CardView 4 -->
@@ -102,7 +102,7 @@
                 android:layout_height="140dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
-                android:layout_marginBottom="86dp"
+
 
                 app:cardCornerRadius="8dp">
 
@@ -111,7 +111,25 @@
                     android:layout_width="match_parent"
                     android:layout_height="140dp"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/help3" />
+                    android:src="@drawable/h4" />
+            </androidx.cardview.widget.CardView>
+
+            <!-- CardView 4 -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/card_view_5"
+                android:layout_width="match_parent"
+                android:layout_marginTop="30dp"
+                android:layout_height="50dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="86dp"
+
+                app:cardCornerRadius="8dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/white"/>
             </androidx.cardview.widget.CardView>
 
         </LinearLayout>

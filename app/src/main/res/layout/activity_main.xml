@@ -10,7 +10,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/mainpic"
+        android:background="@drawable/mainpiccc"
         android:orientation="vertical">
 
 
@@ -20,9 +20,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="86dp"
-            android:fontFamily="sans-serif-thin"
+            android:fontFamily="sans-serif-condensed-light"
             android:text="SecureShe"
-            android:textColor="#834359"
+            android:textColor="#d33141"
             android:textSize="39sp"
             android:textStyle="bold" />
 
@@ -32,8 +32,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="10dp"
-            android:backgroundTint="#834359"
+            android:backgroundTint="#f88787"
             android:text="Lets Go"
+            android:textColor="@color/white"
             android:textSize="23sp"
             android:textStyle="bold" />
     </LinearLayout>
