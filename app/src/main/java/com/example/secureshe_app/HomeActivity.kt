@@ -1,12 +1,15 @@
 package com.example.secureshe_app
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.database.Cursor
 import android.location.*
 import android.os.Bundle
+import android.view.animation.AnimationSet
+import android.view.animation.ScaleAnimation
 import android.widget.ImageButton
 import android.widget.ImageView
 import androidx.activity.enableEdgeToEdge
@@ -16,7 +19,9 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import android.telephony.SmsManager
+import android.widget.Button
 import android.widget.Toast
+import com.google.firebase.auth.FirebaseAuth
 import java.io.IOException
 import java.util.*
 
@@ -25,12 +30,15 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var lm: LocationManager
     private var currentLocation: String = ""
     private lateinit var databaseHelper: ContactsDatabaseHelper
+    private lateinit var firebaseAuth: FirebaseAuth
 
+    @SuppressLint("WrongViewCast")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.home)
 
+        firebaseAuth = FirebaseAuth.getInstance()
         databaseHelper = ContactsDatabaseHelper(this)
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
@@ -41,7 +49,29 @@ class HomeActivity : AppCompatActivity() {
 
         val button = findViewById<ImageButton>(R.id.action_call)
         button.setOnClickListener {
+            applyScaleAnimation(button)
             val intent = Intent(this, ContactsActivity::class.java)
+            startActivity(intent)
+        }
+
+        val button2 = findViewById<ImageButton>(R.id.action_info)
+        button2.setOnClickListener {
+            applyScaleAnimation(button2)
+            val intent = Intent(this, InfoActivity::class.java)
+            startActivity(intent)
+        }
+
+        val button3 = findViewById<ImageButton>(R.id.image_z)
+        button3.setOnClickListener {
+            applyScaleAnimation(button3)
+            val intent = Intent(this, GestureActivity::class.java)
+            startActivity(intent)
+        }
+
+        val button4 = findViewById<ImageButton>(R.id.image_y)
+        button4.setOnClickListener {
+            applyScaleAnimation(button4)
+            val intent = Intent(this, EmergencyActivity::class.java)
             startActivity(intent)
         }
 
@@ -53,6 +83,38 @@ class HomeActivity : AppCompatActivity() {
                 requestLocationPermissions()
             }
         }
+
+        val profileButton = findViewById<Button>(R.id.action_profile)
+        profileButton.setOnClickListener {
+            firebaseAuth.signOut()
+            val intent = Intent(this, SignInActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
+    }
+
+    private fun applyScaleAnimation(view: ImageView) {
+        val scaleUp = ScaleAnimation(
+            1.0f, 1.2f,  // Start and end values for the X axis scaling
+            1.0f, 1.2f,  // Start and end values for the Y axis scaling
+            ScaleAnimation.RELATIVE_TO_SELF, 0.5f,  // Pivot point of X scaling
+            ScaleAnimation.RELATIVE_TO_SELF, 0.5f   // Pivot point of Y scaling
+        )
+        scaleUp.duration = 150 // Duration for the scale-up animation
+
+        val scaleDown = ScaleAnimation(
+            1.2f, 1.0f,  // Start and end values for the X axis scaling
+            1.2f, 1.0f,  // Start and end values for the Y axis scaling
+            ScaleAnimation.RELATIVE_TO_SELF, 0.5f,  // Pivot point of X scaling
+            ScaleAnimation.RELATIVE_TO_SELF, 0.5f   // Pivot point of Y scaling
+        )
+        scaleDown.duration = 150 // Duration for the scale-down animation
+        scaleDown.startOffset = 150 // Start scale-down after scale-up finishes
+
+        val animationSet = AnimationSet(true)
+        animationSet.addAnimation(scaleUp)
+        animationSet.addAnimation(scaleDown)
+        view.startAnimation(animationSet)
     }
 
     private fun areLocationPermissionsGranted(): Boolean {
